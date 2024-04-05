@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<title>GPA Calculator</title>
+<head>
+    <style>
+        /* Basic reset and font setup for the entire page */
+        body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* Styling for the top navigation bar */
+        .topnav {
+        overflow: hidden;
+        background-color: #060c31;
+        text-align: center;
+      }
+     
+      /* Style for links in the navigation bar, including hover and active states */
+      .topnav a {
+        display: inline-block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+        font-size: 17px;
+        font-family: "Raleway", serif;
+        border-radius: 10px;
+        background-color: #024fd4;
+        margin: 0 5px;
+        transition: background-color 0.3s ease;
+      }
+    
+      /* Hover state for links */
+      .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+      }
+    
+      /* Active link state */
+      .topnav a.active {
+        background-color: #fff;
+        color: #060c31;
+      }
+    
+      /* General styles for headings */
+      h1{font-family: "Raleway", serif;}
+      
+      /* Styling the body to include a background image, ensuring it covers the entire page */
+      body {
+        background-color: #30a1da;
+        background-image: url('https://gpacalclfa.s3.us-east-2.amazonaws.com/mainCodes/CalcImageNew.jpg'); 
+        height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      /* Styles for the GPA calculator containers to make them visually distinct */
+      .gpa-calculator,
+.gpa-calculator1 {
+    flex: 0 0 calc(50% - 40px); /* Adjusted width to take half of the available width minus padding */
+    background-color: rgba(255, 255, 255);
+    padding: 20px;
+    margin: 155px;
+    border-radius: 25px;
+    border: 2px solid #000000;
+    box-sizing: border-box; /* Include padding and border in the box's total width */
+}
+
+.gpa-calculator {
+    margin-left: 200px;
+    float: left; /* Pushes the first box to the left */
+
+}
+
+.gpa-calculator1 {
+    
+    float: right; /* Pushes the second box to the right */
+
+}
+
+.identifier{
+    color: #f2f2f2;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+        border-radius: 10px;
+        border: 2px black
+}
+      /* Styles for inline paragraph elements, distinguishing them by colors */
+      p1, p2 {
+        display: inline-block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+        font-size: 17px;
+        font-family: "Raleway", serif;
+        border-radius: 10px;
+        margin: 40px;
+        margin-top: 30px;
+      }
+      p2 {
+        background-color: rgba(24, 168, 190);
+        margin-left: 350px;
+      }
+
+      p1{
+        background-color: #060c31;
+        
+      }
+
+      /* Style for a generic button container for additional UI elements */
+      .button-container {
+        display: inline-block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 20px;
+        font-size: 17px;
+        font-family: "Raleway", serif;
+        border-radius: 10px;
+        background-color: black;
+        margin-left: 710px;
+      }
+
+      /* Adjustments to the container class for layout */
+      .container {
+        position: relative;
+        padding-bottom: 50px; /* Allows space for the button container at the bottom */
+      }
+    
+    </style>
+    <!-- external JS library for PDF generation-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Navigation bar section -->
+    <div class="topnav">
+        <a href="home.html" id="homeLink">Home</a>
+        <a href="calculator.html" id="calculatorLink" class="active">Calculator</a>
+        <a href="qa.html" id="qaLink">QA</a>
+    </div>
+
+    <!-- Main title for the page -->
+    <p2 style="font-family: Georgia">
+        <font size="7">
+        Weighted and Unweighted GPA Calculators
+        </font>
+    </p2>
+
+    <!-- Calculator description section -->
+    <p1 style="font-family: Georgia">
+        <font size="5">
+        On the calculator page, there are two calculators which use the LFA GPA system and the unweighted system respectively. It is cumulative and you can add semester and courses however you want. You can also remove courses and semesters. Just enter your letter grade for each course and its name along with credits. You can print a pdf report at the end.
+        </font>
+    </p1>
+    <div class="identifier">
+        <div style = "background: black; outline: 5px solid skyblue; padding-top:10px; margin-inline: 570px; border-radius: 2vh;" class="student-details">
+            <label for="studentName">Student Name:</label>
+            <input type="text" id="studentName" name="studentName" required><br><br>
+            <label for="studentId">Student ID:</label>
+            <input type="text" id="studentId" name="studentId" required><br><br>
+        </div>
+        <br>
+        <br>
+        <button onclick="generatePDF()" style="font-size: 20px; padding: 10px 20px; border: 2px solid #024fd4; border-radius: 5px; background-color: #060c31; color: white;">Download PDF Report</button>
+    </div>
+
+
+        
+    <div class="container">
+        <!-- Weighted GPA Calculator -->
+        <div class="gpa-calculator" id="weightedGpaCalculator">
+            <h2>LFA Weighted GPA Calculator</h2>
+            <div id="weightedSemestersContainer">
+                <!-- Semester 1 -->
+                <div class="semester" id="weightedSemester1">
+                    <h3>Semester 1</h3>
+                    <table id="weightedSemester1Table">
+                        <tr>
+                            <th>Grade</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select class="grade" required>
+                                    <option value="4.33">A+</option>
+                                    <option value="4.0">A</option>
+                                    <option value="3.67">A-</option>
+                                    <option value="3.33">B+</option>
+                                    <option value="3.0">B</option>
+                                    <option value="2.67">B-</option>
+                                    <option value="2.33">C+</option>
+                                    <option value="2.0">C</option>
+                                    <option value="1.67">C-</option>
+                                    <option value="1.33">D+</option>
+                                    <option value="1.0">D</option>
+                                    <option value="0.67">D-</option>
+                                    <option value="0">F</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="courseName" required></td>
+                            <td>
+                                <!--<input class="credit" required>-->
+                                <input type="number" min="0" max="4" step="0.5" class="credit" required/>
+                        
+                            </td>
+                            <td><button onclick="addCourse('weightedSemester1')">Add Course</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <button onclick="addSemester('weightedSemestersContainer')">Add Semester</button>
+            <button onclick="removeSemester('weightedSemestersContainer')">Remove Semester</button>
+            <button onclick="calculateGPA('weightedSemestersContainer')">Calculate Weighted GPA</button>
+            <p id="weightedGpaResult"></p>
+        </div>
+        
+        <!-- Unweighted GPA Calculator -->
+        <div class="gpa-calculator" id="unweightedGpaCalculator">
+            <h2>Unweighted GPA Calculator</h2>
+            <div id="unweightedSemestersContainer">
+                <div class="semester" id="unweightedSemester1">
+                    <h3>Semester 1</h3>
+                    <table id="unweightedSemester1Table">
+                        <tr>
+                            <th>Grade</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select class="grade" required>
+                                    <option value="4.0">A+</option>
+                                    <option value="4.0">A</option>
+                                    <option value="4.0">A-</option>
+                                    <option value="3.0">B+</option>
+                                    <option value="3.0">B</option>
+                                    <option value="3.0">B-</option>
+                                    <option value="2.0">C+</option>
+                                    <option value="2.0">C</option>
+                                    <option value="2.0">C-</option>
+                                    <option value="1.0">D+</option>
+                                    <option value="1.0">D</option>
+                                    <option value="1.0">D-</option>
+                                    <option value="0">F</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="courseName" required></td>
+                            <td><!--<input type="number" class="credit" required>-->
+                                <input type="number" min="0" max="4" step="0.5" class="credit"/>
+                            </td>
+                            <td><button onclick="addCourse('unweightedSemester1')">Add Course</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <button onclick="addSemester('unweightedSemestersContainer')">Add Semester</button>
+            <button onclick="removeSemester('unweightedSemestersContainer')">Remove Semester</button>
+            <button onclick="calculateGPA('unweightedSemestersContainer')">Calculate Unweighted GPA</button>
+            <p id="unweightedGpaResult"></p>
+        </div>
+        
+    </div>
+
+
+    <!--JS-->
+    <script>
+        function addCourse(semesterId) {
+       const semesterTable = document.getElementById(semesterId + "Table");
+       const row = semesterTable.insertRow(-1);
+       row.innerHTML = `
+           <td>
+               <select class="grade" required>
+                   <option value="4.33">A+</option>
+                   <option value="4.0">A</option>
+                   <option value="3.67">A-</option>
+                   <option value="3.33">B+</option>
+                   <option value="3.0">B</option>
+                   <option value="2.67">B-</option>
+                   <option value="2.33">C+</option>
+                   <option value="2.0">C</option>
+                   <option value="1.67">C-</option>
+                   <option value="1.33">D+</option>
+                   <option value="1.0">D</option>
+                   <option value="0.67">D-</option>
+                   <option value="0">F</option>
+               </select>
+           </td>
+           <td><input type="text" class="courseName" required></td>
+           <td><input type="number" min="0" max="4" step="0.5" class="credit"/></td>
+           <td><button onclick="removeRow(this)">Remove</button></td>
+       `;
+   }
+
+   // Function to add a new semester
+   function addSemester(containerId) {
+       const semesterContainer = document.getElementById(containerId);
+       const semesterCount = semesterContainer.querySelectorAll('.semester').length + 1;
+       const newSemester = document.createElement('div');
+       newSemester.className = 'semester';
+       newSemester.id = `${containerId === 'weightedSemestersContainer' ? 'weighted' : 'unweighted'}Semester${semesterCount}`;
+       newSemester.innerHTML = `
+           <h3>Semester ${semesterCount}</h3>
+           <table id="${newSemester.id}Table">
+               <tr>
+                   <th>Grade</th>
+                   <th>Course Name</th>
+                   <th>Credit Hours</th>
+                   <th>Action</th>
+               </tr>
+               <tr>
+                   <td>
+                       <select class="grade" required>
+                           <option value="4.33">A+</option>
+                           <option value="4.0">A</option>
+                           <option value="3.67">A-</option>
+                           <option value="3.33">B+</option>
+                           <option value="3.0">B</option>
+                           <option value="2.67">B-</option>
+                           <option value="2.33">C+</option>
+                           <option value="2.0">C</option>
+                           <option value="1.67">C-</option>
+                           <option value="1.33">D+</option>
+                           <option value="1.0">D</option>
+                           <option value="0.67">D-</option>
+                           <option value="0">F</option>
+                       </select>
+                   </td>
+                   <td><input type="text" class="courseName" required></td>
+                   <td><input type="number" min="0" max="4" step="0.5" class="credit"/></td>
+                   <td><button onclick="addCourse('${newSemester.id}')">Add Course</button></td>
+               </tr>
+           </table>
+       `;
+       semesterContainer.appendChild(newSemester);
+   }
+
+   // Function to remove a course row
+   function removeRow(button) {
+       const row = button.parentNode.parentNode;
+       row.parentNode.removeChild(row);
+   }
+
+   function removeSemester(containerId) {
+    const semesterContainer = document.getElementById(containerId);
+    // Select all semester divs within the container
+    const semesters = semesterContainer.querySelectorAll('.semester');
+
+    // Check if there is at least one semester to remove
+    if (semesters.length > 0) {
+        // Remove the last semester from the DOM
+        semesterContainer.removeChild(semesters[semesters.length - 1]);
+
+        // Optional: Update remaining semester headers if needed
+        updateSemesterHeaders(containerId);
+    } else {
+        alert("No semester to remove!");
+    }
+}
+
+// Optional: Function to update semester headers after a semester is removed
+function updateSemesterHeaders(containerId) {
+    const semesterContainer = document.getElementById(containerId);
+    // Select all semester divs within the container
+    const semesters = semesterContainer.querySelectorAll('.semester');
+
+    // Iterate over each semester and update its header
+    semesters.forEach((semester, index) => {
+        // Assuming each semester has an h3 tag for its header
+        const header = semester.querySelector('h3');
+        if (header) {
+            header.textContent = `Semester ${index + 1}`;
+        }
+
+        // Update the ID of the semester to reflect its new order
+        semester.id = `${containerId === 'weightedSemestersContainer' ? 'weighted' : 'unweighted'}Semester${index + 1}`;
+    });
+}
+
+   // Function to calculate weighted or unweighted GPA
+   function calculateGPA(containerId) {
+       const semestersContainer = document.getElementById(containerId);
+       const semesters = semestersContainer.querySelectorAll('.semester');
+       let totalGradePoints = 0;
+       let totalCredits = 0;
+
+       semesters.forEach((semester) => {
+           const grades = semester.querySelectorAll('.grade');
+           const credits = semester.querySelectorAll('.credit');
+
+           grades.forEach((grade, index) => {
+               const credit = credits[index].value;
+               totalGradePoints += parseFloat(grade.value) * credit;
+               totalCredits += parseFloat(credit);
+           });
+       });
+
+       const gpa = totalGradePoints / totalCredits;
+       const gpaResult = containerId === 'weightedSemestersContainer' ? document.getElementById('weightedGpaResult') : document.getElementById('unweightedGpaResult');
+       gpaResult.textContent = "Your GPA is: " + gpa.toFixed(2);
+   }
+
+    // Script to handle navigation link activation states
+    document.addEventListener("DOMContentLoaded", function() {
+      const homeLink = document.getElementById('homeLink');
+      const calculatorLink = document.getElementById('calculatorLink');
+      const qaLink = document.getElementById('qaLink');
+     
+      homeLink.addEventListener('click', function(event) {
+        calculatorLink.classList.remove('active');
+        qaLink.classList.remove('active');
+        
+      });
+  
+      calculatorLink.addEventListener('click', function(event) {
+        homeLink.classList.remove('active');
+        qaLink.classList.remove('active');
+        
+      });
+  
+      qaLink.addEventListener('click', function(event) {
+        homeLink.classList.remove('active');
+        calculatorLink.classList.remove('active');
+        
+      });
+  
+    });
+
+
+
+    // Your existing JavaScript functions (addCourse, addSemester, removeRow, calculateGPA)
+
+    // Function to generate and download a PDF report for GPA calculation
+    function generatePDF() {
+    const { jsPDF } = window.jspdf; // Correctly accessing jsPDF
+    const doc = new jsPDF();
+
+    const studentName = document.getElementById('studentName').value;
+    const studentId = document.getElementById('studentId').value;
+
+
+    let pdfContent = 'GPA Calculator Report\n\n';
+
+     // Include Student Name and ID in the PDF content
+    pdfContent += `Student Name: ${studentName}\n`;
+    pdfContent += `Student ID: ${studentId}\n\n`;
+
+
+    // Function to add semester data to pdfContent
+    function addSemesterData(containerId, type) {
+        const semestersContainer = document.getElementById(containerId);
+        const semesters = semestersContainer.querySelectorAll('.semester');
+        pdfContent += `${type} GPA Data:\n`;
+        
+        semesters.forEach((semester, index) => {
+            pdfContent += `Semester ${index + 1}:\n`;
+            const courses = semester.querySelectorAll('tr');
+            courses.forEach((course, courseIndex) => {
+                if (courseIndex > 0) { // Skip header row
+                    const grade = course.querySelector('.grade').value;
+                    const courseName = course.querySelector('.courseName').value;
+                    const credit = course.querySelector('.credit').value;
+                    pdfContent += `Course: ${courseName}, Grade: ${grade}, Credits: ${credit}\n`;
+                }
+            });
+        });
+        
+        const gpaResult = containerId === 'weightedSemestersContainer' ? document.getElementById('weightedGpaResult').textContent : document.getElementById('unweightedGpaResult').textContent;
+        pdfContent += ` ${gpaResult}\n\n`;
+    }
+
+    // Call addSemesterData for weighted and unweighted GPA data
+    addSemesterData('weightedSemestersContainer', 'Weighted');
+    addSemesterData('unweightedSemestersContainer', 'Unweighted');
+
+    // Adding the entire content to the PDF
+    doc.text(pdfContent, 10, 10);
+
+    // Saving the PDF file
+    doc.save('GPA_Calculator_Report.pdf');
+}
+
+    </script>
+
+</body>
+</html>
+ 
